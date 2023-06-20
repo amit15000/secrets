@@ -3,9 +3,14 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose');
 // const encrypt = require('mongoose-encryption')       //bcz we are going to use Hash(md5)
-const md5 = require('md5')
+// const md5 = require('md5')  because we will use bcrypt
+
+const bcrypt= require('bcrypt')
+const saltRounds = 10;
+
 const ejs = require('ejs')
 const app = express()
+
 
 app.use(express.static("public"))
 app.set('view engine', 'ejs')
