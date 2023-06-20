@@ -51,7 +51,7 @@ app.post("/register", (req, res) => {
       email: req.body.username,
       password: hash
     });
-  });
+  
   newUser
     .save()
     .then((savedUser) => {
@@ -60,6 +60,7 @@ app.post("/register", (req, res) => {
     .catch((error) => {
       console.error(error);
     });
+  });
 });
 
 app.post("/login", (req, res) => {
@@ -69,14 +70,18 @@ app.post("/login", (req, res) => {
 
   User.findOne({ email: username })
     .then((foundUser) => {
-      if (foundUser.password === password) {
-        res.render("secrets");
-      } else {
-        res.send(
-          "<h1>Enter correct Email and Password.</h1><br>Please register before login"
-        );
-      }
-    })
+      bcrypt.compare(password, hash, function(err, result) {
+        if(result){
+          res.render("secrets");
+        }
+        else {
+          res.send(
+            "<h1>Enter correct Email and Password.</h1><br>Please register before login"
+          );
+             }
+         }
+        )
+      })
     .catch((err) => res.render("There occurred some error" + err));
 });
 
