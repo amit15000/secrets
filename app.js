@@ -66,11 +66,11 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
   const username = req.body.username;
   // const password = md5(req.body.password);
-  const password = md5(req.body.password);
+  const password = req.body.password;
 
   User.findOne({ email: username })
     .then((foundUser) => {
-      bcrypt.compare(password, hash, function(err, result) {
+      bcrypt.compare(password, foundUser.password, function(err, result) {
         if(result){
           res.render("secrets");
         }
