@@ -70,7 +70,6 @@ app.get('/register', (req, res) => {
     
   })
 
-  
 
 
 
