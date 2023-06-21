@@ -24,6 +24,9 @@ app.use(session({
   saveUninitialized:false  
 
 }))
+app.use(passport.initialize());
+app.use(passport.session());
+
  
 mongoose.connect('mongodb://localhost:27017/userDB');
 
@@ -32,11 +35,16 @@ const userSchema = new mongoose.Schema({
   password : String 
 });
 
+userSchema.plugin(passportLocalMongoose)
 
 // userSchema.plugin(encrypt, { secret :process.env.SECRET, encryptedFields:["password"]});  //bcz we are going to use Hash(md5)
 
 
 const User = new mongoose.model("User", userSchema)
+€
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser())
 
 
 app.get('/', (req, res) => {
