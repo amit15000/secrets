@@ -2,6 +2,13 @@ require('dotenv').config();
 const express = require('express') 
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose');
+
+//using passport
+const session  = require('express-session')
+const passport = require("passport")
+const passportLocalMongoose = require("passport-local-mongoose")
+// const passportLocal = require('passport-local')      not need to  require passport-local
+
 // const encrypt = require('mongoose-encryption')       //bcz we are going to use Hash(md5)
 const md5 = require('md5')
 const ejs = require('ejs')
@@ -17,7 +24,7 @@ const userSchema = new mongoose.Schema({
   email : String,
   password : String
 });
-const secret = "thisIsMyLittleSecret";
+
 
 // userSchema.plugin(encrypt, { secret :process.env.SECRET, encryptedFields:["password"]});  //bcz we are going to use Hash(md5)
 
