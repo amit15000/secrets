@@ -68,6 +68,11 @@ app.get('/register', (req, res) => {
       res.redirect('login')
     }
     
+  });
+
+  app.get('/logout', function(req,res){
+    req.logout()
+    res.redirect('/')
   })
 
 
@@ -92,7 +97,7 @@ app.post('/login', (req,res)=>{
 
   const user = new User({
     username : req.body.username,
-    password : req.body.password;
+    password : req.body.password
   });
 
   req.login(user, function(err){
@@ -104,17 +109,8 @@ app.post('/login', (req,res)=>{
         res.redirect('/secrets')
       })
     }
-
-  })
-
-  User.findOne({email:username})
-  .then((foundUser=>{
-    if(foundUser.password === password){
-      res.render('secrets')
-    }
-    else{res.send("<h1>Enter correct Email and Password.</h1><br>Please register before login")}
-  }))
-  .catch(err => res.render("There occurred some error"+ err))
   });
+  });
+ 
 
 app.listen('3000', ()=>{console.log("Server started on port 3000")} );
