@@ -10,7 +10,7 @@ const passportLocalMongoose = require("passport-local-mongoose")
 // const passportLocal = require('passport-local')      not need to  require passport-local
 
 // const encrypt = require('mongoose-encryption')       //bcz we are going to use Hash(md5)
-const md5 = require('md5')
+// const md5 = require('md5')
 const ejs = require('ejs')
 const app = express()
 
@@ -61,28 +61,52 @@ app.get('/register', (req, res) => {
     res.render('register')
   })
 
+  app.get('/secrets', (req, res) => {
+    if(req.isAuthenticated()){
+      res.render('secrets')
+    }else{
+      res.redirect('login')
+    }
+    
+  })
+
+  
+
+
+
 app.post('/register', (req,res)=>{
-  const newUser = new User({
-    // email : req.body.username,
-    // password: req.body.password
-    email : req.body.username,
-    password: md5(req.body.password)
-  })
-  newUser.save()
-  .then(savedUser => {
-    res.render('secrets')
-  })
-  .catch(error => {
-    console.error(error);
+User.register({username:req.body.username},req.body.password,function(err,user){
+  if(err){
+    console.log(err);
+    res.redirect('/register');
+  }else{
+    passport.authenticate("local")(req,res,function(){
+      res.redirect('/secrets')
+    })
+  }
 })
-});
+}); 
 
 
 
 app.post('/login', (req,res)=>{
-  const username = req.body.username;
-  const password = md5(req.body.password);
 
+  const user = new User({
+    username : req.body.username,
+    password : req.body.password;
+  });
+
+  req.login(user, function(err){
+    if(err){
+      console.log(err)
+    }
+    else{
+      passport.authenticate("local")(req,res,function(){
+        res.redirect('/secrets')
+      })
+    }
+
+  })
 
   User.findOne({email:username})
   .then((foundUser=>{
