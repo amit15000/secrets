@@ -69,6 +69,7 @@ passport.use(new GoogleStrategy({
   callbackURL: "http://localhost:3000/auth/google/secrets"
 },
 function(accessToken, refreshToken, profile, cb) {
+  console.log(profile)
   User.findOrCreate({ googleId: profile.id }, function (err, user) {
     return cb(err, user);
   });
@@ -108,8 +109,12 @@ app.get('/secrets', (req, res) => {
 });
 
 app.get('/logout', function(req, res) {
-  req.logout();
-  res.redirect('/');
+  req.logout(function(err) {
+    if (err) {
+      console.log(err);
+    }
+    res.redirect('/');
+  });
 });
 
 app.post('/register', (req, res) => {
