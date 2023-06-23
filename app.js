@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const { MongoParseError } = require('mongodb');
 
 // Using passport
 const session = require('express-session');
@@ -24,12 +25,20 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect('mongodb://localhost:27017/userDB', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-  useFindAndModify: false
-});
+try {
+  mongoose.connect('mongodb://localhost:27017/userDB', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+  });
+} catch (error) {
+  if (error instanceof MongoParseError) {
+    console.error(`${error.message}`);
+  } else {
+    console.error(error);
+  }
+}
 
 const userSchema = new mongoose.Schema({
   email: String,
