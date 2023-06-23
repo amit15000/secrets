@@ -29,9 +29,7 @@ try {
   mongoose.connect('mongodb://localhost:27017/userDB', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false
-  });
+});
 } catch (error) {
   if (error instanceof MongoParseError) {
     console.error(`${error.message}`);
@@ -52,9 +50,19 @@ userSchema.plugin(findOrCreate);
 const User = mongoose.model("User", userSchema);
 
 passport.use(User.createStrategy());
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
 
+passport.deserializeUser(function(id, done) {
+  User.findById(id)
+    .then(user => {
+      done(null, user);
+    })
+    .catch(err => {
+      done(err, null);
+    });
+});
 passport.use(new GoogleStrategy({
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
