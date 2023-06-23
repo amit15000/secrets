@@ -70,11 +70,15 @@ app.get('/register', (req, res) => {
     
   });
 
-  app.get('/logout', function(req,res){
-    req.logout()
-    res.redirect('/')
-  })
-
+  app.get('/logout', function(req, res) {
+    req.logout(function(err) {
+      if (err) {
+        console.log(err);
+      }
+      res.redirect('/');
+    });
+  });
+  
 
 
 
